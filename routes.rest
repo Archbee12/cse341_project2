@@ -1,0 +1,76 @@
+// We create the Authors 
+// Then we make use of the authorsId to create the book
+691b4e8d1b2d293d41aad623
+### GetAll
+http://localhost:3000/authors 
+
+### Get author by Id
+http://localhost:3000/authors/6919c803a4981960c5cc1e1e
+
+### Create author
+POST http://localhost:3000/authors
+content-type: application/json
+
+{
+  "name": "Chimamanda Ngozi Adichie",
+  "birthYear": 1977,
+  "nationality": "Nigerian"
+}
+
+### Put Book by Id
+PUT http://localhost:3000/authors/69182f4a702f435bcaded411 HTTP/1.1 
+content-type: application/json
+
+{
+  "name": "Yuval Noah Harari",
+  "birthYear": 1976,
+  "nationality": "Israeli"
+}
+
+### Delete Author by id
+DELETE http://localhost:3000/authors/691b4e8d1b2d293d41aad623 HTTP/1.1 
+
+
+//Books
+
+### GetAll
+http://localhost:3000/books 
+
+### Get book by id
+http://localhost:3000/books/691b3d57126f145c7239efce
+
+### Create book
+POST http://localhost:3000/books
+content-type: application/json
+
+{
+  "title": "Purple Hibiscus",
+  "genre": "Fiction",
+  "isbn": "9780143104915",
+  "publishedYear": 2003,
+  "pages": 320,
+  "available": true,
+  "authorId": "6919c7c6a4981960c5cc1e1b"
+}
+
+### Put book
+PUT http://localhost:3000/books/691b3d57126f145c7239efce HTTP/1.1 
+content-type: application/json
+
+{
+  "title": "The Power of Self-Discipline",
+  "genre": "Self-Help",
+  "isbn": "9780735211442",
+  "publishedYear": 2012,
+  "pages": 250,
+  "available": true,
+  "authorId": "691b436b6835068ce0a0b360"
+}
+
+
+### Delete book
+DELETE http://localhost:3000/books/6919c86e857aba08f6aec5d5 HTTP/1.1 
+content-type: application/json
+
+
+
