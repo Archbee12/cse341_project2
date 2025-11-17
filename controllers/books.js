@@ -20,7 +20,7 @@ const getSingle = async (req, res) => {
     const result = await mongodb.getDatabase().collection('books').findOne({ _id: bookId });
 
     if (!result) {
-      return res.status(404).json({ message: "Book not found" });
+      return res.status(404).json({ message: 'Book not found' });
     }
 
     res.setHeader('Content-Type', 'application/json');
@@ -37,7 +37,15 @@ const createBook = async (req, res) => {
 
     const { title, genre, isbn, publishedYear, pages, available, author } = req.body;
 
-    if (!title || !genre || !isbn || !publishedYear || !pages || available === undefined || !author || !author.name) {
+    if (
+      !title ||
+      !genre ||
+      !isbn ||
+      !publishedYear ||
+      !pages ||
+      available === undefined ||
+      !author
+    ) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -49,7 +57,7 @@ const createBook = async (req, res) => {
         name: author.name,
         birthYear: author.birthYear || null,
         nationality: author.nationality || null,
-        createdAt: new Date()
+        createdAt: new Date(),
       });
       existingAuthor = { _id: authorResult.insertedId };
     }
@@ -63,13 +71,19 @@ const createBook = async (req, res) => {
       pages: req.body.pages,
       available: req.body.available,
       createdAt: new Date(),
-      authorId: existingAuthor._id
+      authorId: existingAuthor._id,
     };
 
     const response = await db.collection('books').insertOne(book);
 
     if (response.acknowledged) {
-      res.status(201).json({ message: "Book created successfully", bookId: response.insertedId, authorId: existingAuthor._id });
+      res
+        .status(201)
+        .json({
+          message: 'Book created successfully',
+          bookId: response.insertedId,
+          authorId: existingAuthor._id,
+        });
     } else {
       res.status(500).json({ error: 'Failed to create book' });
     }
@@ -77,7 +91,6 @@ const createBook = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 // Update a Book
 // Update a Book
@@ -87,7 +100,15 @@ const updateBook = async (req, res) => {
 
     const { title, genre, isbn, publishedYear, pages, available, authorId } = req.body;
 
-    if (!title || !genre || !isbn || !publishedYear || pages === undefined || available === undefined || !authorId) {
+    if (
+      !title ||
+      !genre ||
+      !isbn ||
+      !publishedYear ||
+      pages === undefined ||
+      available === undefined ||
+      !authorId
+    ) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -98,26 +119,23 @@ const updateBook = async (req, res) => {
       publishedYear: req.body.publishedYear,
       pages: req.body.pages,
       available: req.body.available,
-      authorId: new ObjectId(authorId)
+      authorId: new ObjectId(authorId),
     };
 
-    const response = await mongodb.getDatabase().collection('books').updateOne(
-      { _id: bookId },
-      { $set: updatedBook }
-    );
+    const response = await mongodb
+      .getDatabase()
+      .collection('books')
+      .updateOne({ _id: bookId }, { $set: updatedBook });
 
     if (response.modifiedCount > 0) {
-      res.status(200).json({ message: "Book updated successfully" });
+      res.status(200).json({ message: 'Book updated successfully' });
     } else {
-      res.status(404).json({ error: "Book not found or no changes made" });
+      res.status(404).json({ error: 'Book not found or no changes made' });
     }
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
-
 
 // Delete a Book
 const deleteBook = async (req, res) => {
@@ -126,11 +144,10 @@ const deleteBook = async (req, res) => {
     const response = await mongodb.getDatabase().collection('books').deleteOne({ _id: bookId });
 
     if (response.deletedCount > 0) {
-      res.status(200).json({ message: "Book deleted successfully" });
+      res.status(200).json({ message: 'Book deleted successfully' });
     } else {
-      res.status(404).json({ error: "Book not found" });
+      res.status(404).json({ error: 'Book not found' });
     }
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

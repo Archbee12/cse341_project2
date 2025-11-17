@@ -19,11 +19,6 @@ app.use('/api-docs', swaggerRoute);
 // Rest Api
 app.use((req, res, next) => {
   res.setHeader('Access-control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Orgin, x-Requested-with, Content-Type Accept, z-key'
-  );
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
 })
 
