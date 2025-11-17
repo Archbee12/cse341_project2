@@ -2,6 +2,7 @@
 const express = require('express');
 const app = express();
 const mongodb = require('./database/connect');
+const swaggerRoute = require('./routes/swagger');
 const route = require('./routes');
 const bodyParser = require("body-parser")
 
@@ -12,6 +13,8 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api-docs', swaggerRoute);
 
 // Rest Api
 app.use((req, res, next) => {
