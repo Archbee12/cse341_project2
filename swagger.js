@@ -5,7 +5,7 @@ const doc = {
     title: 'Books and Authors API',
     description: 'API documentation for authors and their book project',
   },
-  host: 'https://cse341-project2-x9m0.onrender.com',
+  host: 'cse341-project2-x9m0.onrender.com',
   schemes: ['https'],
 };
 
