@@ -4,9 +4,7 @@ const ObjectId = require('mongodb').ObjectId;
 // Get all books
 const getAll = async (req, res) => {
   try {
-    const result = await mongodb.getDatabase().collection('books').find();
-    const books = await result.toArray();
-    res.setHeader('Content-Type', 'application/json');
+    const books = await mongodb.getDatabase().collection('books').find().toArray();
     res.status(200).json(books);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -17,14 +15,11 @@ const getAll = async (req, res) => {
 const getSingle = async (req, res) => {
   try {
     const bookId = new ObjectId(req.params.id);
-    const result = await mongodb.getDatabase().collection('books').findOne({ _id: bookId });
+    const book = await mongodb.getDatabase().collection('books').findOne({ _id: bookId });
 
-    if (!result) {
-      return res.status(404).json({ message: 'Book not found' });
-    }
+    if (!book) return res.status(404).json({ message: 'Book not found' });
 
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).json(result);
+    res.status(200).json(book);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -34,104 +29,38 @@ const getSingle = async (req, res) => {
 const createBook = async (req, res) => {
   try {
     const db = mongodb.getDatabase();
+    const { title, genre, isbn, publishedYear, pages, available, authorId } = req.body;
 
-    const { title, genre, isbn, publishedYear, pages, available, author } = req.body;
-
-    if (
-      !title ||
-      !genre ||
-      !isbn ||
-      !publishedYear ||
-      !pages ||
-      available === undefined ||
-      !author
-    ) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    // Check if author exists by name
-    let existingAuthor = await db.collection('authors').findOne({ name: author.name });
-    if (!existingAuthor) {
-      // If not, create new author
-      const authorResult = await db.collection('authors').insertOne({
-        name: author.name,
-        birthYear: author.birthYear || null,
-        nationality: author.nationality || null,
-        createdAt: new Date(),
-      });
-      existingAuthor = { _id: authorResult.insertedId };
-    }
-
-    // Create book using existingAuthor._id
     const book = {
-      title: req.body.title,
-      genre: req.body.genre,
-      isbn: req.body.isbn,
-      publishedYear: req.body.publishedYear,
-      pages: req.body.pages,
-      available: req.body.available,
+      title,
+      genre,
+      isbn,
+      publishedYear,
+      pages,
+      available,
+      authorId: new ObjectId(authorId),
       createdAt: new Date(),
-      authorId: existingAuthor._id,
     };
 
     const response = await db.collection('books').insertOne(book);
-
-    if (response.acknowledged) {
-      res
-        .status(201)
-        .json({
-          message: 'Book created successfully',
-          bookId: response.insertedId,
-          authorId: existingAuthor._id,
-        });
-    } else {
-      res.status(500).json({ error: 'Failed to create book' });
-    }
+    res.status(201).json({ message: 'Book created successfully', bookId: response.insertedId });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// Update a Book
+
 // Update a Book
 const updateBook = async (req, res) => {
   try {
     const bookId = new ObjectId(req.params.id);
-
     const { title, genre, isbn, publishedYear, pages, available, authorId } = req.body;
 
-    if (
-      !title ||
-      !genre ||
-      !isbn ||
-      !publishedYear ||
-      pages === undefined ||
-      available === undefined ||
-      !authorId
-    ) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
+    const updatedBook = { title, genre, isbn, publishedYear, pages, available, authorId: new ObjectId(authorId) };
+    const response = await mongodb.getDatabase().collection('books').updateOne({ _id: bookId }, { $set: updatedBook });
 
-    const updatedBook = {
-      title: req.body.title,
-      genre: req.body.genre,
-      isbn: req.body.isbn,
-      publishedYear: req.body.publishedYear,
-      pages: req.body.pages,
-      available: req.body.available,
-      authorId: new ObjectId(authorId),
-    };
-
-    const response = await mongodb
-      .getDatabase()
-      .collection('books')
-      .updateOne({ _id: bookId }, { $set: updatedBook });
-
-    if (response.modifiedCount > 0) {
-      res.status(200).json({ message: 'Book updated successfully' });
-    } else {
-      res.status(404).json({ error: 'Book not found or no changes made' });
-    }
+    if (response.modifiedCount > 0) return res.status(200).json({ message: 'Book updated successfully' });
+    res.status(404).json({ error: 'Book not found or no changes made' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -143,11 +72,8 @@ const deleteBook = async (req, res) => {
     const bookId = new ObjectId(req.params.id);
     const response = await mongodb.getDatabase().collection('books').deleteOne({ _id: bookId });
 
-    if (response.deletedCount > 0) {
-      res.status(200).json({ message: 'Book deleted successfully' });
-    } else {
-      res.status(404).json({ error: 'Book not found' });
-    }
+    if (response.deletedCount > 0) return res.status(200).json({ message: 'Book deleted successfully' });
+    res.status(404).json({ error: 'Book not found' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

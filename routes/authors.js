@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const authorsController = require('../controllers/authors');
+const {validateAuthor}  = require('../middleware/validateAuthor')
 
 router.get('/', authorsController.getAll);
 
 router.get('/:id', authorsController.getSingle)
 
-router.post('/', authorsController.createAuthor);
+router.post('/', validateAuthor, authorsController.createAuthor);
 
-router.put('/:id', authorsController.updateAuthor);
+router.put('/:id', validateAuthor, authorsController.updateAuthor);
 
 router.delete('/:id', authorsController.deleteAuthor);
 
