@@ -5,9 +5,9 @@ const doc = {
     title: 'Books and Authors API',
     description: 'API documentation for authors and their book project',
   },
-  host: 'cse341-project2-x9m0.onrender.com',
-  schemes: ['https'],
-  // host: 'localhost:3000',
+  // host: 'cse341-project2-x9m0.onrender.com',
+  schemes: ['http'],
+  host: 'localhost:3000',
 };
 
 const outputFile = './swagger.json';

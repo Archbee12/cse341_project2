@@ -5,9 +5,9 @@
     "description": "API documentation for the books and authors project",
     "version": "1.0.0"
   },
-  "host": "cse341-project2-x9m0.onrender.com",
+  "host": "localhost:3000",
   "basePath": "/",
-  "schemes": ["https"],
+  "schemes": ["http"],
   "paths": {
     "/authors/": {
       "get": {

@@ -7,8 +7,10 @@ const route = require('./routes');
 const bodyParser = require("body-parser");
 const passport = require('passport');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const GitHubStrategy = require('passport-github2').Strategy
 const cors = require('cors');
+
 
 // 2 We call the port to view the page
 const port = process.env.PORT || 3000;
@@ -18,7 +20,11 @@ app.use(bodyParser.json());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URL,
+        ttl: 14 * 24 * 60 * 60 // 14 days
+    })
 }));
 // Express session initialization
 app.use(passport.initialize());
