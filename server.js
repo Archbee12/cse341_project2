@@ -18,7 +18,7 @@ const port = process.env.PORT || 3000;
 // Body Parser
 app.use(bodyParser.json());
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: "secret",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
